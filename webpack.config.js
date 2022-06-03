@@ -1,24 +1,34 @@
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 let mode = "development"
+let target = "web"
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV?.trim() === "production") {
     mode = "production"
+    target = "browserslist"
 }
 
 module.exports = {
     mode: mode,
-    devtool: "source-map",
+    target: target,
     module: {
         rules: [
+            {
+                test: /\.s?css$/i,
+                use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"]
+            },
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"
+                    loader: "babel-loader" 
                 }
             }
         ]
     },
+    plugins: [ new MiniCssExtractPlugin() ],
+    devtool: "source-map",
     devServer: {
-        static: './dist'
+        static: './dist',
+        hot: true
     }
 }
